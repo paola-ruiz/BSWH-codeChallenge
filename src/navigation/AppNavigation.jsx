@@ -11,7 +11,7 @@ export const AppNavigation = () => {
     return(
         <NavigationContainer>
             <Stack.Navigator>
-                <Stack.Screen name="Users" component={UsersPage}/>
+                <Stack.Screen name="Users" component={UsersPage} options={{ title: "Users" }}/>
                 <Stack.Screen name="Photos" component={PhotosPage}/>
             </Stack.Navigator>
         </NavigationContainer>

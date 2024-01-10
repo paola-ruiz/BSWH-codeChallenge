@@ -8,7 +8,7 @@ export const PhotosContextProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(false);
 
-    const photosInformation = async() => {
+    const photosInformation = async(idAlbum) => {
         setIsLoading(true);
         setError(false)
         photosPerAlbum(idAlbum).then((P) => {

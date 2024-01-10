@@ -1,7 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Text, FlatList, View, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
-import { ActivityIndicator, Colors } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { UserContext } from "../services/users/users.context";
+import { useDispatch } from "react-redux";
+import { delAlbum } from "../redux/albumSlice";
 
 export const Accordion = ({navigation}) => {
     const { 
@@ -19,6 +21,12 @@ export const Accordion = ({navigation}) => {
         });
         return unsubscribe;
     }, []);
+
+    function deleteitem(index) {
+        const dispatch = useDispatch();
+        dispatch(delAlbum(index));
+        albumsInformation();
+    }
 
     return(
         <SafeAreaView style={{ flex: 1}}>
@@ -46,10 +54,14 @@ export const Accordion = ({navigation}) => {
                                         renderItem={({item, index}) => {
                                             return(
                                                 <View style={styles.albumContainer}>
-                                                    <TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => navigation.navigate("Photos", {
+                                                        navigation: navigation,
+                                                        id: index,
+                                                        title: item
+                                                    })}>
                                                         <Text style={styles.albumText}>{item}</Text>
                                                     </TouchableOpacity>
-                                                    <TouchableOpacity>
+                                                    <TouchableOpacity onPress={deleteitem(index)}>
                                                         <Text style={styles.deleteBtn}>DEL</Text>
                                                     </TouchableOpacity>
                                                 </View>

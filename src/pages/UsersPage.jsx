@@ -5,8 +5,6 @@ import { UserContextProvider } from "../services/users/users.context";
 
 export const UsersPage = ({navigation}) => {
     return(
-        <UserContextProvider>
-            <Accordion navigation={navigation}/>
-        </UserContextProvider>
+        <Accordion navigation={navigation}/>
     )
 }
