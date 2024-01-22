@@ -1,5 +1,6 @@
 export const photosPerAlbum = async(idAlbum) => {
     const url = "https://jsonplaceholder.typicode.com/photos?albumId=" + idAlbum;
+    console.log(url);
     try{
         let response = await fetch(url, {
             method: "GET",

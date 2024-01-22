@@ -11,7 +11,7 @@ export const PhotosContextProvider = ({children}) => {
     const photosInformation = async(idAlbum) => {
         setIsLoading(true);
         setError(false)
-        photosPerAlbum(idAlbum).then((P) => {
+        await photosPerAlbum(idAlbum).then((P) => {
             setPhotos(P);
             console.log("data photos response: ", P);
             setIsLoading(false);

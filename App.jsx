@@ -9,20 +9,20 @@ import React from 'react';
 import { AppNavigation } from './src/navigation/AppNavigation';
 import 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
-import { store } from "./src/redux";
+import {store} from './src/redux/store';
 import { UserContextProvider } from './src/services/users/users.context';
 import { PhotosContextProvider } from './src/services/photos/photos.context';
 
 function App() {
   
   return (
-    <UserContextProvider>
-      <PhotosContextProvider>
-        <Provider store={store}>
+    <Provider store={store}>
+      <UserContextProvider>
+        <PhotosContextProvider>
           <AppNavigation/>
-        </Provider>
-      </PhotosContextProvider>
-    </UserContextProvider>
+        </PhotosContextProvider>
+      </UserContextProvider>
+    </Provider>
   );
 }
 

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    deletedAlbums: -1
+    deletedAlbums: null
 };
 
 export const albumSlice = createSlice({
@@ -10,6 +10,7 @@ export const albumSlice = createSlice({
     reducers: {
         delAlbum: (state, action) => {
             state.deletedAlbums = action.payload;
+            console.log(state.deletedAlbums.user);
         }
     }
 })

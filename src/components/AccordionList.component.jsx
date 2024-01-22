@@ -1,31 +1,45 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, FlatList, View, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { UserContext } from "../services/users/users.context";
 import { useDispatch } from "react-redux";
 import { delAlbum } from "../redux/albumSlice";
+import { useSelector } from "react-redux";
 
 export const Accordion = ({navigation}) => {
     const { 
         users,  
         albums,
         isLoading,
-        complete, 
         usersInformation,
         albumsInformation} = useContext(UserContext);
+
+    const dispatch = useDispatch();
+    const deletedAlbum = useSelector((state) => state.album);
+    const [currentIndex, setCurrentIndex] = useState(null);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             usersInformation();
-            albumsInformation();
+            albumsInformation(1);
+            setCurrentIndex(null);
+            checkDeleted();
         });
         return unsubscribe;
     }, []);
 
-    function deleteitem(index) {
-        const dispatch = useDispatch();
-        dispatch(delAlbum(index));
-        albumsInformation();
+    function checkDeleted(){
+        //console.log(deletedAlbum.user);
+        if(deletedAlbum.user === currentIndex + 1){ //exist a deleted album and user selected has one
+            console.log("usuario tiene album eliminado");
+        }
+    }
+
+    function deleteitem(indexList) {
+        const arrAlbum = {"user": currentIndex + 1, "album": indexList}
+        dispatch(delAlbum(arrAlbum));
+        albums.splice(indexList, 1);
+        checkDeleted();
     }
 
     return(
@@ -42,39 +56,47 @@ export const Accordion = ({navigation}) => {
             </View>
         ):(
             <View style={styles.container}>
-                <FlatList
-                    data={users}
-                    renderItem={({item, index}) => {
-                        return (
-                            <View>
-                                <Text style={styles.nameText}>{item.name}</Text>
-                                {complete ? (
-                                    <FlatList
-                                        data={albums}
-                                        renderItem={({item, index}) => {
-                                            return(
-                                                <View style={styles.albumContainer}>
-                                                    <TouchableOpacity onPress={() => navigation.navigate("Photos", {
-                                                        navigation: navigation,
-                                                        id: index,
-                                                        title: item
-                                                    })}>
-                                                        <Text style={styles.albumText}>{item}</Text>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity onPress={deleteitem(index)}>
-                                                        <Text style={styles.deleteBtn}>DEL</Text>
-                                                    </TouchableOpacity>
+                {users.map(({id, name}, index) => {
+                    return(
+                        <TouchableOpacity 
+                            key={id} 
+                            onPress={() => {
+                                albumsInformation(id);
+                                setCurrentIndex(index === currentIndex ? null : index);
+                            }} 
+                            style={styles.usersContainer}
+                            activeOpacity={0.9}>
+                            <View style={styles.users}>
+                                <Text style={styles.nameText}>{name}</Text>
+                               {index === currentIndex && (
+                                <FlatList
+                                    data={albums}
+                                    renderItem={({item, index}) => {
+                                    return(
+                                        <View style={styles.albumContainer}>
+                                            <TouchableOpacity
+                                                onPress={() => deleteitem(index)}>
+                                                <Text style={styles.deleteBtn}>DEL</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity 
+                                                onPress={() => {
+                                                    navigation.navigate("Photos", {
+                                                        id: item.id,
+                                                        title: item.title
+                                            })}}>
+                                                <View style={styles.albumTextContainer}>
+                                                    <Text style={styles.albumText}>{item.id} - {item.title}</Text> 
                                                 </View>
-                                            )
-                                        }}>
-                                    </FlatList>
-                                ) : null}
-                                    
-                                
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                }}>
+                                </FlatList>
+                                ) }
                             </View>
-                        );
-                    }}>
-                </FlatList>
+                        </TouchableOpacity>
+                    )
+                })}
             </View>
         )}
         </SafeAreaView>
@@ -96,28 +118,42 @@ const styles = StyleSheet.create({
         fontWeight: '400'
     },
     container: {
-        padding: 20
+        flex: 1
+    },
+    usersContainer: {
+        flexGrow: 1
+    },
+    users: {
+        flexGrow: 1,
+        backgroundColor: "#000000"
     },
     nameText: {
-        fontSize: 24,
-        color: "#207BB9",
-        padding: 10
+        fontSize: 30,
+        color: "#FFFFFF",
+        fontWeight: "900",
+        textTransform: "uppercase",
+        letterSpacing: -2
     },
     albumText: {
-        fontSize: 16,
-        paddingLeft: 30,
+        fontSize: 20,
+        lineHeight: 20 * 1.5,
+        textAlign: "left",
+        color: "#FFFFFF",
+        paddingLeft: 10,
         justifyContent: "flex-start",
         alignContent: "flex-start"
     },
     deleteBtn: {
         color: "#FF0000",
         fontSize: 16,
-        justifyContent: "flex-end",
-        alignContent: "flex-end"
+        justifyContent: "flex-start",
+        alignContent: "flex-start"
     },
     albumContainer: {
         flexDirection: 'row',
-        justifyContent: "space-between",
         padding: 2
+    },
+    albumTextContainer: {
+        paddingLeft: 10
     }
 });

@@ -3,14 +3,15 @@ import { Text, SafeAreaView, StyleSheet, View, FlatList, Dimensions, Image } fro
 import { PhotosContext } from "../services/photos/photos.context";
 import { ActivityIndicator } from 'react-native-paper';
 
-export const PhotosPage = ({navigation, id, title}) => {
+export const PhotosPage = ({navigation, route}) => {
 
     const {
         photos,
-        error,
         isLoading,
         photosInformation
     } = useContext(PhotosContext);
+
+    const {id, title} = route.params;
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -26,7 +27,7 @@ export const PhotosPage = ({navigation, id, title}) => {
                 <View style={styles.loader}>
                     <ActivityIndicator
                         animating={true}
-                        color={'#2699E8'}
+                        color={'#FFFFFF'}
                         size={50}
                     />
                     <Text style={styles.textLoader}>Loading...</Text>
@@ -36,15 +37,17 @@ export const PhotosPage = ({navigation, id, title}) => {
                     <FlatList
                         data={photos}
                         numColumns={3}
-                        renderItem={(item, index) => {
+                        renderItem={({item, index}) => {
                             return(
                                 <View style={styles.image}>
-                                    <Image source={{uri: item.thumbnailUrl}} />
+                                    <Image style={{width: '100%', height: '100%'}} 
+                                        source={{uri: item.thumbnailUrl}} />
                                 </View>
                             );
                         }}
                         >
                         </FlatList>
+                    
                 </View>
             )}
         </SafeAreaView>
@@ -57,22 +60,25 @@ const styles = StyleSheet.create({
         height: 120,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 30
+        padding: 30,
+        backgroundColor: "#000000",
+        flex: 1
     },
     textLoader: {
-        color: '#000', 
+        color: '#FFFFFF', 
         fontSize: 14, 
         marginVertical: 20, 
         fontWeight: '400'
     },
     container: {
-        padding: 20
+        padding: 10,
+        backgroundColor: "#000000"
     },
     image: {
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
-        margin: 1,
+        margin: 0.5,
         height: Dimensions.get("window").width / 3
     }
 })

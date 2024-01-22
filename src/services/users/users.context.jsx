@@ -1,6 +1,5 @@
 import React, { createContext, useState } from "react";
 import { infoUsers, albumsPerUser } from "./users.service";
-import { useSelector } from "react-redux";
 
 export const UserContext = createContext();
 
@@ -9,8 +8,6 @@ export const UserContextProvider = ({children}) => {
     const [albums, setAlbums] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(false);
-    const [complete, setComplete] = useState(false);
-    const deletedAlbum = useSelector((state) => state.album);
 
     const usersInformation = async() => {
         setIsLoading(true);
@@ -25,31 +22,15 @@ export const UserContextProvider = ({children}) => {
         })
     }
 
-    const albumsInformation = async() => {
-        setIsLoading(true);
+    const albumsInformation = async(idUser) => {
         setAlbums([]);
         setError(false);
-        let temp = [];
-        /*for(var a=0; a<users.length; a++){
-            albumsPerUser(A[i].id).then((A) => {
-                for(var i = 0; i<A.length; i++){
-                    temp.push(A[i].title);
-                }
-                albums.push(temp);
-            })
-        }*/
-        albumsPerUser(1).then((A) => {
-            for(var i = 0; i<A.length; i++){
-                temp.push(A[i].title);
-            }
-            if(deletedAlbum >= 0){
-                temp.splice(deletedAlbum, 1);
-            }
-            setAlbums(temp);
-            setComplete(true);
-            console.log(albums);
+        await albumsPerUser(idUser).then((A) => {
+            setAlbums(A);
+        }).catch((e) => {
+            setError(true);
         })
-        setIsLoading(false);
+        
     }
 
     return(
@@ -59,7 +40,6 @@ export const UserContextProvider = ({children}) => {
                 albums,
                 error, 
                 isLoading,
-                complete,
                 usersInformation, 
                 albumsInformation
             }}>
